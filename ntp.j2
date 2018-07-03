@@ -1,0 +1,12 @@
+## NTP Config - Managed by Ansible
+## Donot change
+
+driftfile /varlib/ntp/drfit
+
+restrict default nomdify notrap nopeer
+restrict 192.168.1.0 mask 255.255.255.0
+
+server 192.168.1.00 uburst
+
+key /etc/ntp/keys
+disable monitor

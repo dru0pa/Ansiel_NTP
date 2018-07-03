@@ -1,0 +1,35 @@
+- hosts: NTP
+#become_user: root
+  vars:
+    ntp_server1: 192.168.1.200
+  tasks:
+# recomened not to make us of chrony as ment for laptops not servers
+
+  - name: remove chrony client package from system
+    yum:
+      name=chrony
+      state=absent
+    tags: remove_chrony.start_ntp
+# This is to make sure ntp package is installed
+  - name: check/install ntp client pakage
+    yum:
+      name=ntp
+      state=present
+    tags: install_ntp,start_ntp
+# This is to copy the custom ntp.con file.
+  - name: deploy ntp.conf to clients
+    copy:
+      src=/etc/ansible/templates/ntp.j2
+      dest=/etc/ntp.conf
+      owner=root
+      group=root
+      mode=0644
+      backup=yes
+    notify: start_restart_ntp_client
+    tags: copy_ntp_conf,start_ntp
+  handlers:
+    - name: start_restart_ntp_client
+      service:
+        name=ntpd
+        state=restart
+        enable=yes
